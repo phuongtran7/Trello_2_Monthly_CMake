@@ -10,9 +10,6 @@
 # Trello API key file
 Secrets.h
 
-# JSON
-*.json
-
 # TEX files
 *.tex
 *.aux
