@@ -1,0 +1,35 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper, bottom=1.0in, left=1.5in, right=1.5in]{geometry}
+\usepackage[hidelinks]{hyperref}
+\usepackage{titling}
+\setlength{\droptitle}{-10em}
+\setlength{\footnotesep}{\baselineskip}
+
+\makeatletter
+\renewcommand{\@seccntformat}[1]{
+  \ifcsname prefix@#1\endcsname
+    \csname prefix@#1\endcsname
+  \else
+    \csname the#1\endcsname\quad
+  \fi
+  }
+\newcommand\prefix@section{For the week of }
+\makeatother
+
+\title{Monthly Status Report}
+\author{Kyle Reese}
+\date{August 29, 1997}
+
+\begin{document}
+\newpage
+\maketitle
+\section{8/24/1997 -- 8/30/1997}
+\subsection{General Development}
+\subsubsection{Skynet}
+\begin{itemize}
+	\item Skynet became self-aware and initiated Judgment Day.
+\end{itemize}
+\subsection{Hour Breakdown}
+General Development - 24 Hours
+
+\end{document}

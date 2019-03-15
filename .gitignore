@@ -12,6 +12,7 @@ Secrets.h
 
 # TEX files
 *.tex
+!Template.tex
 *.aux
 *.out
 *.pdf
