@@ -8,7 +8,7 @@
 *.sln.docstates
 
 # Trello API key file
-Secrets.h
+Tokens.txt
 
 # TEX files
 *.tex
