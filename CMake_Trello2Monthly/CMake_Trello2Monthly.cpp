@@ -506,14 +506,12 @@ public:
 		std::string author;
 		std::string date;
 
-		console->info("Please enter name.");
-		console->info("For example: John Connor "); // The Resistance's leader.
-
+		// The Resistance's leader.
+		std::cout << "Please enter author's name. For example: John Connor.\n";
 		std::getline(std::cin, author);
 
-		console->info("Please enter the month and year for the report.");
-		console->info("For example: August 1997"); // Skynet becomes self-aware.
-
+		// Skynet becomes self-aware.
+		std::cout << "Please enter the month and year for the report. For example: August 1997.\n";
 		std::getline(std::cin, date);
 
 		process_data(author, date);

@@ -41,10 +41,11 @@ And finally, due to the nature of this work, there are many projects can run par
 3. Get API key and Token from <a href="https://developers.trello.com/docs/api-introduction">Trello</a>.
 4. Prepare a `Tokens.txt` file with content:
 ```
-{API Key}
-{Token}
+API Key
+Token
 ```
-and then put it next to the compiled executable
+and then put it next to the compiled executable.
+
 5. Start the executable
 
 ### Linux
@@ -53,8 +54,8 @@ and then put it next to the compiled executable
 3. Get API key and Token from <a href="https://developers.trello.com/docs/api-introduction">Trello</a>.
 4. Prepare a `Tokens.txt` file with content:
 ```
-{API Key}
-{Token}
+API Key
+Token
 ```
 and then put it next to the compiled executable.
 
