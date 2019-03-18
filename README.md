@@ -56,5 +56,6 @@ and then put it next to the compiled executable
 {API Key}
 {Token}
 ```
-and then put it next to the compiled executable
+and then put it next to the compiled executable.
+
 5. Run the executable by `./CMake_Trello2Monthly`
