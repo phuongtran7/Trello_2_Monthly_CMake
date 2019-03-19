@@ -14,20 +14,20 @@ class monthly
 private:
 	struct boards_info
 	{
-		string_t name;
-		string_t id;
+		std::string name;
+		std::string id;
 	};
 
 	struct list_info
 	{
-		string_t name;
-		string_t id;
+		std::string name;
+		std::string id;
 	};
 
 	struct card_info
 	{
-		string_t name;
-		string_t label;
+		std::string name;
+		std::string label;
 	};
 	string_t trello_secrect_;
 
@@ -74,7 +74,7 @@ private:
 		return header;
 	}
 
-	string_t get_active_boards()
+	std::string get_active_boards()
 	{
 		// Create http_client to send the request.
 		http_client client(U("https://api.trello.com"));
@@ -84,7 +84,7 @@ private:
 		builder.set_path(U("/1/members/me/boards"));
 		builder.append_path(trello_secrect_);
 
-		pplx::task<string_t> request_task = client.request(methods::GET, builder.to_string())
+		pplx::task<std::string> request_task = client.request(methods::GET, builder.to_string())
 
 			// Handle response headers arriving.
 			.then([=](http_response response)
@@ -92,41 +92,27 @@ private:
 			console->info("Received response status code from Boards querry: {}.", response.status_code());
 
 			// Extract JSON out of the response
-			return response.extract_json();
+			return response.extract_utf8string();
 		})
 			// parse JSON
-			.then([=](json::value json_data)
+			.then([=](std::string json_data)
 		{
+			rapidjson::Document document;
+			document.Parse(json_data.c_str());
+
 			std::vector<boards_info> list_of_open_boards;
-			auto data_array = json_data.as_array();
-			for (auto data : data_array)
-			{
-				auto data_obj = data.as_object();
-				boards_info temp;
-				auto board_is_close = false;
-				for (const auto& iter_inner : data_obj)
+
+			// Only get the board that the "close" value is false
+			for (const auto& object : document.GetArray()) {
+				if (!object.FindMember("closed")->value.GetBool())
 				{
-					if (iter_inner.first == U("name"))
-					{
-						temp.name = iter_inner.second.as_string();
-					}
-
-					if (iter_inner.first == U("closed"))
-					{
-						board_is_close = iter_inner.second.as_bool();
-					}
-
-					if (iter_inner.first == U("id"))
-					{
-						temp.id = iter_inner.second.as_string();
-					}
-				}
-
-				if (!board_is_close)
-				{
+					boards_info temp;
+					temp.name = object.FindMember("name")->value.GetString();
+					temp.id = object.FindMember("id")->value.GetString();
 					list_of_open_boards.emplace_back(temp);
 				}
 			}
+
 			return list_of_open_boards;
 		})
 
@@ -135,7 +121,7 @@ private:
 			//for (const auto& boards : input)
 			for (size_t i = 0; i < input.size(); ++i)
 			{
-				console->info("[{}] board: {} is active.", i, conversions::to_utf8string(input.at(i).name), conversions::to_utf8string(input.at(i).id));
+				console->info("[{}] board: \"{}\" is active.", i, input.at(i).name, input.at(i).id);
 			}
 
 			console->info("Please enter board number you wish to convert to TEX:");
@@ -160,7 +146,7 @@ private:
 		return request_task.get();
 	}
 
-	std::vector<list_info> get_lists(const string_t& board_id)
+	std::vector<list_info> get_lists(const std::string& board_id)
 	{
 		// Create http_client to send the request.
 		http_client client(U("https://api.trello.com"));
@@ -168,7 +154,7 @@ private:
 		// Build request URI and start the request.
 		uri_builder builder;
 		builder.set_path(U("/1/boards/"));
-		builder.append_path(board_id);
+		builder.append_path(conversions::to_string_t(board_id));
 		builder.append_path(U("/lists"));
 		builder.append_path(trello_secrect_);
 
@@ -180,28 +166,21 @@ private:
 			console->info("Received response status code from List querry: {}.", response.status_code());
 
 			// Extract JSON out of the response
-			return response.extract_json();
+			return response.extract_utf8string();
 		})
 			// parse JSON
-			.then([=](json::value json_data)
+			.then([=](std::string json_data)
 		{
 			std::vector<list_info> list_id;
-			auto data_array = json_data.as_array();
-			for (const auto& list : data_array)
-			{
+
+			rapidjson::Document document;
+			document.Parse(json_data.c_str());
+
+			// Loop through all the list and get the data
+			for (const auto& object : document.GetArray()) {
 				list_info temp_list;
-				const auto& data_obj = list.as_object();
-				for (const auto& iter_inner : data_obj)
-				{
-					if (iter_inner.first == U("id"))
-					{
-						temp_list.id = iter_inner.second.as_string();
-					}
-					if (iter_inner.first == U("name"))
-					{
-						temp_list.name = iter_inner.second.as_string();
-					}
-				}
+				temp_list.name = object.FindMember("name")->value.GetString();
+				temp_list.id = object.FindMember("id")->value.GetString();
 				list_id.emplace_back(temp_list);
 			}
 			return list_id;
@@ -221,7 +200,7 @@ private:
 	}
 
 	// Get all the cards and its label, within a specific list
-	std::vector<card_info> get_card(const string_t& list_id)
+	std::vector<card_info> get_card(const std::string& list_id)
 	{
 		// Create http_client to send the request.
 		http_client client(U("https://api.trello.com"));
@@ -229,7 +208,7 @@ private:
 		// Build request URI and start the request.
 		uri_builder builder;
 		builder.set_path(U("/1/lists/"));
-		builder.append_path(list_id);
+		builder.append_path(conversions::to_string_t(list_id));
 		builder.append_path(U("/cards"));
 		builder.append_path(trello_secrect_);
 
@@ -241,46 +220,23 @@ private:
 			console->info("Received response status code from Card querry: {}.", response.status_code());
 
 			// Extract JSON out of the response
-			return response.extract_json();
+			return response.extract_utf8string();
 		})
 			// parse JSON
-			.then([=](json::value json_data)
+			.then([=](std::string json_data)
 		{
 			std::vector<card_info> cards;
-			auto data_array = json_data.as_array();
-			// Loop through all the cards in the list and return a vector of card name and label
-			for (const auto& card : data_array)
-			{
-				card_info temp;
-				const auto& data_obj = card.as_object();
-				for (const auto& iter_inner : data_obj)
-				{
-					if (iter_inner.first == U("name"))
-					{
-						auto temp_string = iter_inner.second.serialize();
-						// Trim the double quotes at start and end of the string
-						temp.name = temp_string.substr(1, temp_string.size() - 2);
-					}
 
-					if (iter_inner.first == U("labels"))
-					{
-						// Loop through all the labels the card has
-						const auto& card_labels = iter_inner.second.as_array();
-						for (auto label : card_labels)
-						{
-							const auto& data = label.as_object();
-							// Loop through all the fields each of label has
-							for (const auto& iterator : data)
-							{
-								if (iterator.first == U("name"))
-								{
-									temp.label = iterator.second.as_string();
-								}
-							}
-						}
-					}
-				}
-				cards.emplace_back(temp);
+			rapidjson::Document document;
+			document.Parse(json_data.c_str());
+
+			// Loop through all the cards
+			for (const auto& object : document.GetArray()) {
+				card_info temp_card;
+				temp_card.name = object.FindMember("name")->value.GetString();
+				// Get the first label's name
+				temp_card.label = object["labels"].GetArray().Begin()->FindMember("name")->value.GetString();
+				cards.emplace_back(temp_card);
 			}
 			return cards;
 		});
@@ -299,7 +255,7 @@ private:
 	}
 
 	// The number of subsection in the latex will depends on the number of labels
-	std::vector<string_t> get_labels(const string_t& board_id)
+	std::vector<std::string> get_labels(const std::string& board_id)
 	{
 		// Create http_client to send the request.
 		http_client client(U("https://api.trello.com"));
@@ -307,11 +263,11 @@ private:
 		// Build request URI and start the request.
 		uri_builder builder;
 		builder.set_path(U("/1/boards/"));
-		builder.append_path(board_id);
+		builder.append_path(conversions::to_string_t(board_id));
 		builder.append_path(U("/labels/"));
 		builder.append_path(trello_secrect_);
 
-		pplx::task<std::vector<string_t>> request_task = client.request(methods::GET, builder.to_string())
+		pplx::task<std::vector<std::string>> request_task = client.request(methods::GET, builder.to_string())
 
 			// Handle response headers arriving.
 			.then([=](http_response response)
@@ -319,23 +275,20 @@ private:
 			console->info("Received response status code from Label querry: {}", response.status_code());
 
 			// Extract JSON out of the response
-			return response.extract_json();
+			return response.extract_utf8string();
 		})
 			// parse JSON
-			.then([=](json::value json_data)
+			.then([=](std::string json_data)
 		{
-			std::vector<string_t> labels;
-			auto data_array = json_data.as_array();
-			for (const auto& label : data_array)
-			{
-				const auto& data_obj = label.as_object();
-				for (const auto& iter_inner : data_obj)
-				{
-					if (iter_inner.first == U("name"))
-					{
-						labels.emplace_back(iter_inner.second.as_string());
-					}
-				}
+			std::vector<std::string> labels;
+
+			rapidjson::Document document;
+			document.Parse(json_data.c_str());
+
+			// Loop through all the label objects
+			for (const auto& object : document.GetArray()) {
+				// Get the name of the label
+				labels.emplace_back(object.FindMember("name")->value.GetString());
 			}
 			return labels;
 		});
@@ -357,9 +310,9 @@ private:
 	// As latex is really picky about empty bullet point elements so this is done to make sure
 	// that there is at least a card that was tagged with the label in order to make a "\subsubsection"
 	// Also, due to the fact that labels are defined per board not per list so we cannot get label for specific list
-	std::unordered_set<string_t> get_using_label(std::vector<card_info> cards)
+	std::unordered_set<std::string> get_using_label(std::vector<card_info> cards) const
 	{
-		std::unordered_set<string_t> unique_labels;
+		std::unordered_set<std::string> unique_labels;
 		for (const auto& card : cards)
 		{
 			unique_labels.insert(card.label);
@@ -499,10 +452,11 @@ private:
 	}
 
 public:
-	monthly()
+	monthly() = default;
+
+	void run()
 	{
 		start_logger();
-
 		std::string author;
 		std::string date;
 
@@ -515,7 +469,7 @@ public:
 		std::getline(std::cin, date);
 
 		process_data(author, date);
-	};
+	}
 	std::shared_ptr<spdlog::logger> console = nullptr;
 	std::shared_ptr<spdlog::logger> file = nullptr;
 };
@@ -523,6 +477,7 @@ public:
 int main()
 {
 	monthly new_month;
+	new_month.run();
 	std::getchar();
 	return 0;
 }
