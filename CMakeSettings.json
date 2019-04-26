@@ -11,13 +11,7 @@
       "installRoot": "${env.USERPROFILE}\\CMakeBuilds\\${workspaceHash}\\install\\${name}",
       "cmakeCommandArgs": "",
       "buildCommandArgs": "-v",
-      "ctestCommandArgs": "",
-      "variables": [
-        {
-          "name": "CMAKE_TOOLCHAIN_FILE",
-          "value": "C:\\Users\\Developer\\Documents\\Project Library\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake"
-        }
-      ]
+      "ctestCommandArgs": ""
     },
     {
       "name": "x64-Release",
@@ -31,13 +25,7 @@
       "installRoot": "${env.USERPROFILE}\\CMakeBuilds\\${workspaceHash}\\install\\${name}",
       "cmakeCommandArgs": "",
       "buildCommandArgs": "-v",
-      "ctestCommandArgs": "",
-      "variables": [
-        {
-          "name": "CMAKE_TOOLCHAIN_FILE",
-          "value": "C:\\Users\\Developer\\Documents\\Project Library\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake"
-        }
-      ]
+      "ctestCommandArgs": ""
     }
   ]
 }

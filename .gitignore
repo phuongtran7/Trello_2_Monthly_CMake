@@ -10,6 +10,7 @@
 # Trello API key file
 Tokens.txt
 Secrects.h
+config.toml
 
 # TEX files
 *.tex
