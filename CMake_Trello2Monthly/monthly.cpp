@@ -1,4 +1,3 @@
-#include "pch.h"
 #include  "monthly.h"
 
 using namespace utility;                    // Common utilities like string conversions
