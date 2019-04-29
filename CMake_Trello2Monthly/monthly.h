@@ -1,4 +1,5 @@
 #pragma once
+
 #include <iostream>
 #include <cpprest/http_client.h>
 #include <cpprest/filestream.h>
@@ -16,7 +17,7 @@
 #include <cstdio>
 
 // Current file version
-constexpr auto version = "v1.0.8";
+constexpr auto version = "v1.0.9";
 
 class monthly
 {
@@ -49,8 +50,7 @@ class monthly
 	web::http::client::http_client client_;
 	web::http::client::http_client update_client_;
 	std::shared_ptr<std::unordered_map<std::string, std::string>> file_name_map_;
-	bool compare_version(const std::string& current, const std::string& release) const;
-
+	
 	std::vector<std::string> split_description(const std::string& input) const;
 
 	std::optional<std::string> get_date(const std::string& board_name) const;

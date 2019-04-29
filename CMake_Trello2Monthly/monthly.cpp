@@ -1,3 +1,4 @@
+#include "pch.h"
 #include  "monthly.h"
 
 using namespace utility;                    // Common utilities like string conversions
@@ -39,6 +40,170 @@ void monthly::shutdown()
 	std::remove(fmt::format("{}", file_name_map_->at("log")).c_str());
 	std::remove(fmt::format("{}", file_name_map_->at("out")).c_str());
 	std::remove(fmt::format("{}", file_name_map_->at("synctex.gz")).c_str());
+}
+
+// Check whether the current version is less then previous version
+bool monthly::compare_version(const std::string& current, const std::string& release) const
+{
+	// Remove letter "v"
+	auto current_version = current.substr(1);
+	auto lastest_version = release.substr(1);
+
+	const std::regex expression(R"(\.)");
+
+	std::vector<std::string> current_vector;
+	std::vector<std::string> lastest_vector;
+
+	for (std::sregex_token_iterator iterator(current_version.begin(), current_version.end(), expression, -1); iterator != std::sregex_token_iterator(); ++iterator)
+	{
+		current_vector.push_back(*iterator);
+	}
+
+	for (std::sregex_token_iterator iterator(lastest_version.begin(), lastest_version.end(), expression, -1); iterator != std::sregex_token_iterator(); ++iterator)
+	{
+		lastest_vector.push_back(*iterator);
+	}
+
+	// Return true if current version is less than available release version
+	return std::lexicographical_compare(current_vector.begin(), current_vector.end(), lastest_vector.begin(), lastest_vector.end());
+}
+
+std::optional<std::string> monthly::check_for_update()
+{
+	uri_builder builder;
+	builder.set_path(U("/repos/phuongtran7/Trello2Monthly/releases/latest"));
+	pplx::task<std::string> get_release_task = update_client_.request(methods::GET, builder.to_string())
+
+		// Handle response headers arriving.
+		.then([=](http_response response)
+			{
+				if (response.status_code() != status_codes::OK)
+				{
+					console->critical("Received response status code from Get Latest Release querry: {}.", response.status_code());
+					throw;
+				}
+
+				// Extract JSON out of the response
+				return response.extract_utf8string();
+			})
+		// parse JSON
+				.then([=](std::string json_data)
+					{
+						rapidjson::Document document;
+						document.Parse(json_data.c_str());
+
+						const auto latest_release = document.FindMember("tag_name")->value.GetString();
+
+						// If current version is less than lastest release version
+						if (compare_version(version, latest_release))
+						{
+							// Return the url so that we can download it.
+							auto url = document.FindMember("assets")->value.GetArray();
+							std::string line;
+							for (auto& element : url)
+							{
+								line = element.FindMember("browser_download_url")->value.GetString();
+							}
+
+							return line;
+						}
+						return std::string("");
+					});
+
+			// Wait for all the outstanding I/O to complete and handle any exceptions
+			try
+			{
+				// ReSharper disable once CppExpressionWithoutSideEffects
+				get_release_task.wait();
+				auto return_val = get_release_task.get();
+
+				if (return_val.empty())
+				{
+					return std::nullopt;
+				}
+				return return_val;
+			}
+			catch (const std::exception & e)
+			{
+				console->critical("Error exception: {}", e.what());
+				return std::nullopt;
+			}
+}
+
+void monthly::download_update(std::optional<std::string> url)
+{
+	if (url.has_value())
+	{
+		const auto complete_url = conversions::to_string_t(url.value());
+		http_client download_client(complete_url);
+
+		auto download = download_client.request(methods::GET)
+			.then([=](http_response response)
+				{
+					return response.body();
+				})
+
+			.then([=](istream is)
+				{
+					auto rwbuf = file_buffer<uint8_t>::open(U("Update.zip")).get();
+					// ReSharper disable once CppExpressionWithoutSideEffects
+					is.read_to_end(rwbuf).get();
+					rwbuf.close().get();
+				});
+
+				// Wait for all the outstanding I/O to complete and handle any exceptions
+				try
+				{
+					// ReSharper disable once CppExpressionWithoutSideEffects
+					download.wait();
+				}
+				catch (const std::exception & e)
+				{
+					console->critical("Error exception: {}", e.what());
+				}
+	}
+}
+
+// Extract the download zip file and override the old files
+void monthly::extract_files() const
+{
+	try
+	{
+		// Extract the zip file
+		const bit7z::Bit7zLibrary lib(L"7z.dll");
+		bit7z::BitExtractor extractor(lib, bit7z::BitFormat::Zip);
+
+		// Create temporary folder to store extracted files
+		fs::create_directory("Temp");
+
+		// Extract and override the current files
+		extractor.extract(L"Update.zip", L"Temp/");
+
+		fs::remove("Update.zip");
+	}
+	catch (const std::exception & e)
+	{
+		std::cout << "Error: " << e.what() << "\n";
+	}
+}
+
+void monthly::call_updater() const
+{
+	STARTUPINFO lp_startup_info;
+	PROCESS_INFORMATION lp_process_info;
+
+	ZeroMemory(&lp_startup_info, sizeof(lp_startup_info));
+	lp_startup_info.cb = sizeof(lp_startup_info);
+	ZeroMemory(&lp_process_info, sizeof(lp_process_info));
+
+	CreateProcess(L"Updater.exe",
+		nullptr, nullptr, nullptr,
+		NULL, NULL, nullptr, nullptr,
+		&lp_startup_info,
+		&lp_process_info
+	);
+	CloseHandle(lp_process_info.hProcess);
+	CloseHandle(lp_process_info.hThread);
 }
 
 // Due to the way new paragraph is represented in the Card's description, there will be two newlines
@@ -626,8 +791,25 @@ void monthly::process_data()
 					{
 						auto temp_string = fmt::format("    \\item {}", card.name);
 						file->info(temp_string);
+
+						// If the card has description then write it into the subitem. Thanks Al for this suggestion
+						if (!card.description.empty())
+						{
+							auto split_input = split_description(card.description);
+
+							// Due to converting to .docx break subitem line break so now we will use list for each of
+							// desciption line.
+							file->info("    \\begin{itemize}");
+							for (const auto& line : split_input)
+							{
+								auto temp_desc = fmt::format("          \\item {}", line);
+								file->info(temp_desc);
+							}
+							file->info("    \\end{itemize}");
+						}
 					}
 				}
+
 				file->info("\\end{itemize}");
 			}
 
