@@ -6,6 +6,9 @@ Trello2Monthly is a command line program to generate PDF and Word files from Tre
 ## Installation
 ### Windows
 1. Install cpprestsdk, spdlog and cpptoml with Microsoft's <a href="https://github.com/Microsoft/vcpkg">vcpkg</a>.
+    * `vcpkg install cpprestsdk`
+    * `vcpkg install spdlog`
+    * `vcpkg install cpptoml`
 2. Clone the project: `git clone https://github.com/phuongtran7/Trello_2_Monthly_CMake.git`.
 3. Go into the project folder: `cd CMake_Trello2Monthly`.
 4. Create `build` folder: `mkdir build`.
@@ -15,6 +18,9 @@ Trello2Monthly is a command line program to generate PDF and Word files from Tre
 
 ### Linux
 1. Install cpprestsdk, spdlog and cpptoml with Microsoft's <a href="https://github.com/Microsoft/vcpkg">vcpkg</a>.
+    * `vcpkg install cpprestsdk`
+    * `vcpkg install spdlog`
+    * `vcpkg install cpptoml`
 2. Clone the project: `git clone https://github.com/phuongtran7/Trello_2_Monthly_CMake.git`.
 3. Go into the project folder: `cd CMake_Trello2Monthly`.
 4. Create `build` folder: `mkdir build`.
