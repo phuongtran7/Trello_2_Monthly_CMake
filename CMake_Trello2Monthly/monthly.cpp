@@ -8,7 +8,7 @@ using namespace concurrency::streams;       // Asynchronous streams
 
 namespace fs = std::filesystem;
 
-monthly::monthly() : client_(U("https://api.trello.com")), update_client_(U("https://api.github.com"))
+monthly::monthly() : client_(U("https://api.trello.com"))
 {
 }
 

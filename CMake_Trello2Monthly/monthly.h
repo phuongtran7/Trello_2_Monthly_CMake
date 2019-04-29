@@ -48,7 +48,7 @@ class monthly
 
 	// Create http_client to send the request.
 	web::http::client::http_client client_;
-	web::http::client::http_client update_client_;
+
 	std::shared_ptr<std::unordered_map<std::string, std::string>> file_name_map_;
 	
 	std::vector<std::string> split_description(const std::string& input) const;
