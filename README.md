@@ -10,7 +10,7 @@ Trello2Monthly is a command line program to generate PDF and Word files from Tre
 3. Go into the project folder: `cd CMake_Trello2Monthly`.
 4. Create `build` folder: `mkdir build`.
 5. Go into `build` folder: `cd build`.
-6. Build project: `cmake .. -DCMAKE_TOOLCHAIN_FILE={VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake`, with VCPKG_ROOT is the installation folder of vcpkg.
+6. Build project: `cmake .. -DCMAKE_TOOLCHAIN_FILE="{VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake"`, with VCPKG_ROOT is the installation folder of vcpkg.
 7. Open `.sln` file and start compiling the executable.
 
 ### Linux
@@ -19,7 +19,7 @@ Trello2Monthly is a command line program to generate PDF and Word files from Tre
 3. Go into the project folder: `cd CMake_Trello2Monthly`.
 4. Create `build` folder: `mkdir build`.
 5. Go into `build` folder: `cd build`.
-6. Build project: `cmake .. -DCMAKE_TOOLCHAIN_FILE={VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake`, with VCPKG_ROOT is the installation folder of vcpkg.
+6. Build project: `cmake .. -DCMAKE_TOOLCHAIN_FILE="{VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake"`, with VCPKG_ROOT is the installation folder of vcpkg.
 7. Compile the executable by using `make`.
 
 ## Preparing Trello
