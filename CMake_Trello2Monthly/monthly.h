@@ -81,6 +81,9 @@ class monthly
 public:
 	std::shared_ptr<spdlog::logger> console{};
 	std::shared_ptr<spdlog::logger> file{};
+
+	void initialize();
+
 	monthly();
 
 	void run();
