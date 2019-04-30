@@ -39,7 +39,7 @@ void monthly::shutdown()
 
 	// Clean up
 	spdlog::drop_all();
-	std::remove(fmt::format("{}", file_name_map_->at("tex")).c_str());
+	//std::remove(fmt::format("{}", file_name_map_->at("tex")).c_str());
 	std::remove(fmt::format("{}", file_name_map_->at("aux")).c_str());
 	std::remove(fmt::format("{}", file_name_map_->at("log")).c_str());
 	std::remove(fmt::format("{}", file_name_map_->at("out")).c_str());
@@ -672,7 +672,8 @@ void monthly::process_data()
 	file->info("\\end{document}");
 
 	// Convert to PDF
-	std::system((fmt::format(R"(pdflatex --interaction=batchmode "{}")", file_name_map_->at("tex"))).c_str());
+	//std::system((fmt::format(R"(pdflatex --interaction=batchmode "{}")", file_name_map_->at("tex"))).c_str());
+	std::system((fmt::format(R"(pdflatex "{}")", file_name_map_->at("tex"))).c_str());
 
 	// Convert to word if pandoc is installed
 	std::system((fmt::format(R"(pandoc -s "{}" -o "{}")", file_name_map_->at("tex"), file_name_map_->at("docx"))).c_str());
