@@ -16,12 +16,20 @@ monthly::monthly()
 	 * https://github.com/Microsoft/cpprestsdk/issues/929
 	 */
 
-	// TO DO: Look for way to search for cert instead of hard code path
-	http_client_config config;
-	config.set_ssl_context_callback([](boost::asio::ssl::context & context)-> void {
-		context.load_verify_file(std::string("/etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt"));
-		});
-	client_ = std::make_shared<http_client>(U("https://api.trello.com"), config);
+	try
+	{
+		// TO DO: Look for way to search for cert instead of hard code path
+		http_client_config config;
+		config.set_ssl_context_callback([](boost::asio::ssl::context & context)-> void {
+				context.load_verify_file(std::string("/etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt"));
+			});
+		client_ = std::make_shared<http_client>(U("https://api.trello.com"), config);
+	}
+	catch (boost::system::system_error& e)
+	{
+		console->critical("Error: {}", e.what());
+	}
+	
 #elif _WIN32
 	client_ = std::make_shared<http_client>(U("https://api.trello.com"));
 #endif
