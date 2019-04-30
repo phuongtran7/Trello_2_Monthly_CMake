@@ -17,7 +17,8 @@ void monthly::initialize()
 	 * More info: https://github.com/Azure/azure-storage-cpp/issues/197
 	 * https://github.com/Microsoft/cpprestsdk/issues/929
 	 */
-	try
+	// If the user has install OpenSSL
+	if (fs::exists("/etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt"))
 	{
 		// TO DO: Look for way to search for cert instead of hard code path
 		http_client_config config;
@@ -26,11 +27,10 @@ void monthly::initialize()
 			});
 		client_ = std::make_shared<http_client>(U("https://api.trello.com"), config);
 	}
-	catch (const boost::system::system_error & e)
+	else
 	{
-		console->critical("Error: {} - {}", e.code().message(), e.what());
+		client_ = std::make_shared<http_client>(U("https://api.trello.com"));
 	}
-
 #elif _WIN32
 	client_ = std::make_shared<http_client>(U("https://api.trello.com"));
 #endif
