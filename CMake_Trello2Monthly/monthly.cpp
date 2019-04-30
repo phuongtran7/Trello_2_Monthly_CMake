@@ -17,7 +17,6 @@ void monthly::initialize()
 	 * More info: https://github.com/Azure/azure-storage-cpp/issues/197
 	 * https://github.com/Microsoft/cpprestsdk/issues/929
 	 */
-
 	try
 	{
 		// TO DO: Look for way to search for cert instead of hard code path
@@ -27,19 +26,20 @@ void monthly::initialize()
 			});
 		client_ = std::make_shared<http_client>(U("https://api.trello.com"), config);
 	}
-	catch (boost::system::system_error & e)
+	catch (const boost::system::system_error & e)
 	{
-		console->critical("Error: {}", e.what());
+		console->critical("Error: {} - {}", e.code(), e.what());
 	}
 
 #elif _WIN32
 	client_ = std::make_shared<http_client>(U("https://api.trello.com"));
 #endif
+
+	start_console_log();
 }
 
 void monthly::run()
 {
-	start_console_log();
 	console->info("+++++++++++++++++++++++++++++++++++++++++++++");
 	console->info("+ Trello to Monthly. Current version {} +", version);
 	console->info("+++++++++++++++++++++++++++++++++++++++++++++");
