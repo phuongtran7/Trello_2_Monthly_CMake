@@ -12,6 +12,8 @@ monthly::monthly() = default;
 
 void monthly::initialize()
 {
+	start_console_log();
+
 #ifdef __linux__ 
 	/* SSL issue when on CentOS 7. Thanks Chad for help solving this.
 	 * More info: https://github.com/Azure/azure-storage-cpp/issues/197
@@ -34,8 +36,6 @@ void monthly::initialize()
 #elif _WIN32
 	client_ = std::make_shared<http_client>(U("https://api.trello.com"));
 #endif
-
-	start_console_log();
 }
 
 void monthly::run()
