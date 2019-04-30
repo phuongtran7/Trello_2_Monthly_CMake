@@ -30,7 +30,7 @@ void monthly::initialize()
 	}
 	catch (const boost::system::system_error & e)
 	{
-		console->critical("Error: {} - {}", e.code(), e.what());
+		console->critical("Error: {} - {}", e.code().message(), e.what());
 	}
 
 #elif _WIN32
