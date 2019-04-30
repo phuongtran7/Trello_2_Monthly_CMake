@@ -84,9 +84,6 @@ std::string monthly::make_header() const
 		"\\usepackage[a4paper, bottom = 1.0in, left = 1.5in, right = 1.5in]{geometry}\n"
 		"\\usepackage[hidelinks]{hyperref}\n"
 		"\n"
-		"\\usepackage{titling}\n"
-		"\\setlength{\\droptitle}{-10em}\n"
-		"\n"
 		"\\setlength{\\footnotesep}{\\baselineskip}\n"
 		"\n"
 		"\\makeatletter\n"
@@ -107,9 +104,8 @@ std::string monthly::make_header() const
 
 	const std::string tail =
 		"\n"
-		"\\begin{document}"
-		"\\newpage"
-		"\\maketitle";
+		"\\begin{document}\n"
+		"\\maketitle\n";
 
 	header.append(tail);
 
