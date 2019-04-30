@@ -8,8 +8,13 @@ using namespace concurrency::streams;       // Asynchronous streams
 
 namespace fs = std::filesystem;
 
-monthly::monthly() : client_(U("https://api.trello.com"))
+monthly::monthly()
 {
+	http_client_config config;
+	config.set_ssl_context_callback([](boost::asio::ssl::context & context)-> void {
+		context.load_verify_file(std::string("/etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt"));
+		});
+	client_ = std::make_shared<http_client>(U("https://api.trello.com"), config);
 }
 
 void monthly::run()
@@ -120,7 +125,7 @@ bool monthly::check_has_custom_field(const std::string& board_id)
 	builder.append_path(U("/customFields"));
 	builder.append_path(trello_secrect_.value());
 
-	pplx::task<bool> request_task = client_.request(methods::GET, builder.to_string())
+	pplx::task<bool> request_task = client_->request(methods::GET, builder.to_string())
 
 		// Handle response headers arriving.
 		.then([=](http_response response)
@@ -163,7 +168,7 @@ std::string monthly::get_active_boards()
 	builder.set_path(U("/1/members/me/boards"));
 	builder.append_path(trello_secrect_.value());
 
-	pplx::task<std::string> request_task = client_.request(methods::GET, builder.to_string())
+	pplx::task<std::string> request_task = client_->request(methods::GET, builder.to_string())
 
 		// Handle response headers arriving.
 		.then([=](http_response response)
@@ -252,7 +257,7 @@ std::vector<monthly::list_info> monthly::get_lists(const std::string& board_id)
 	builder.append_path(U("/lists"));
 	builder.append_path(trello_secrect_.value());
 
-	pplx::task<std::vector<list_info>> request_task = client_.request(methods::GET, builder.to_string())
+	pplx::task<std::vector<list_info>> request_task = client_->request(methods::GET, builder.to_string())
 
 		// Handle response headers arriving.
 		.then([=](http_response response)
@@ -309,7 +314,7 @@ std::vector<monthly::card_info> monthly::get_card(const std::string& list_id)
 	const auto custom_field_path = trello_secrect_.value() + U("&customFieldItems=true"); // For some reason append_path here return 401
 	builder.append_path(custom_field_path);
 
-	pplx::task<std::vector<card_info>> request_task = client_.request(methods::GET, builder.to_string())
+	pplx::task<std::vector<card_info>> request_task = client_->request(methods::GET, builder.to_string())
 
 		// Handle response headers arriving.
 		.then([=](http_response response)
@@ -378,7 +383,7 @@ std::vector<std::string> monthly::get_labels(const std::string& board_id)
 	builder.append_path(U("/labels/"));
 	builder.append_path(trello_secrect_.value());
 
-	pplx::task<std::vector<std::string>> request_task = client_.request(methods::GET, builder.to_string())
+	pplx::task<std::vector<std::string>> request_task = client_->request(methods::GET, builder.to_string())
 
 		// Handle response headers arriving.
 		.then([=](http_response response)
