@@ -5,9 +5,10 @@ Trello2Monthly is a command line program to generate PDF and Word files from Tre
 
 ## Installation
 ### Windows
-1. Install cpprestsdk, spdlog and cpptoml with Microsoft's <a href="https://github.com/Microsoft/vcpkg">vcpkg</a>.
+1. Install cpprestsdk, spdlog, rapidjson and cpptoml with Microsoft's <a href="https://github.com/Microsoft/vcpkg">vcpkg</a>.
     * `vcpkg install cpprestsdk`
     * `vcpkg install spdlog`
+    * `vcpkg install rapidjson`
     * `vcpkg install cpptoml`
 2. Clone the project: `git clone https://github.com/phuongtran7/Trello_2_Monthly_CMake.git`.
 3. Go into the project folder: `cd CMake_Trello2Monthly`.
@@ -17,15 +18,16 @@ Trello2Monthly is a command line program to generate PDF and Word files from Tre
 7. Open `.sln` file and start compiling the executable.
 
 ### Linux
-1. Install cpprestsdk, spdlog and cpptoml with Microsoft's <a href="https://github.com/Microsoft/vcpkg">vcpkg</a>.
+1. Install cpprestsdk, spdlog, rapidjson and cpptoml with Microsoft's <a href="https://github.com/Microsoft/vcpkg">vcpkg</a>.
     * `./vcpkg install cpprestsdk`
     * `./vcpkg install spdlog`
+    * `vcpkg install rapidjson`
     * `./vcpkg install cpptoml`
 2. Clone the project: `git clone https://github.com/phuongtran7/Trello_2_Monthly_CMake.git`.
 3. Go into the project folder: `cd CMake_Trello2Monthly`.
 4. Create `build` folder: `mkdir build`.
 5. Go into `build` folder: `cd build`.
-6. Build project: `cmake .. -DCMAKE_TOOLCHAIN_FILE="{VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake"`, with VCPKG_ROOT is the installation folder of vcpkg.
+6. Build project: `cmake .. -DCMAKE_TOOLCHAIN_FILE="{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"`, with VCPKG_ROOT is the installation folder of vcpkg.
 7. Compile the executable by using `make`.
 
 ## Preparing Trello
@@ -63,7 +65,7 @@ and then put it next to the compiled executable.
 
 ### Linux
 1. Install TexLive by using: `sudo apt-get install texlive-latex-base`.
-2. Install addition packages by using : `sudo apt-get install texlive-latex-extra`.
+2. Install addition packages by using : `sudo apt-get install texlive-latex-extra` (Only if the program cannot produce PDF file after fist try).
 3. Get API key and Token from <a href="https://developers.trello.com/docs/api-introduction">Trello</a>.
 4. Prepare a `config.toml` file with content:
 ```
