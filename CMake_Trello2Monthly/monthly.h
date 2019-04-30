@@ -84,8 +84,6 @@ public:
 
 	void initialize();
 
-	monthly();
-
 	void run();
 
 	void shutdown();

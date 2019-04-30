@@ -8,8 +8,6 @@ using namespace concurrency::streams;       // Asynchronous streams
 
 namespace fs = std::filesystem;
 
-monthly::monthly() = default;
-
 void monthly::initialize()
 {
 	start_console_log();
