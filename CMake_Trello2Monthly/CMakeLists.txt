@@ -3,9 +3,6 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
 # Add source to this project's executable.
 set(SOURCES monthly.cpp monthly.h)
 add_executable (CMake_Trello2Monthly "CMake_Trello2Monthly.cpp" "CMake_Trello2Monthly.h" "monthly.cpp" "monthly.cpp")
