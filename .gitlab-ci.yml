@@ -6,5 +6,5 @@ build:
   script:
       - mkdir build
       - cd build
-      - cmake .. %vcpkg_root%
+      - cmake .. $vcpkg_root
       - make
