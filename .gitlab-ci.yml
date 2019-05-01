@@ -6,5 +6,5 @@ build:
   script:
       - mkdir build
       - cd build
-      - cmake .. -DCMAKE_TOOLCHAIN_FILE="/home/phuong/vcpkg/scripts/buildsystems/vcpkg.cmake"
+      - cmake .. %vcpkg_root%
       - make
