@@ -18,8 +18,8 @@ void monthly::initialize()
 	 * https://github.com/Microsoft/cpprestsdk/issues/929
 	 */
 	// If the user has install OpenSSL
-	if (fs::exists("/etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt"))
-	{
+	if (FILE * file = fopen("/etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt", "r")) {
+		fclose(file);
 		// TO DO: Look for way to search for cert instead of hard code path
 		http_client_config config;
 		config.set_ssl_context_callback([](boost::asio::ssl::context & context)-> void {
