@@ -15,9 +15,10 @@
 #include <regex>
 #include <filesystem>
 #include <cstdio>
+#include <algorithm>
 
 // Current file version
-constexpr auto version = "v1.0.9";
+constexpr auto version = "v1.1.0";
 
 class monthly
 {
@@ -50,7 +51,9 @@ class monthly
 	std::shared_ptr<web::http::client::http_client> client_;
 
 	std::shared_ptr<std::unordered_map<std::string, std::string>> file_name_map_;
-	
+
+	std::unordered_map<std::string, std::string> special_characters_;
+
 	std::vector<std::string> split_description(const std::string& input) const;
 
 	std::optional<std::string> get_date(const std::string& board_name) const;
@@ -78,6 +81,10 @@ class monthly
 	std::unordered_map<std::string, std::string> create_filename_map() const;
 
 	void process_data();
+
+	std::unordered_map<std::string, std::string> map_special_characters() const;
+
+	std::string sanitize_input(std::string input) const;
 public:
 	std::shared_ptr<spdlog::logger> console{};
 	std::shared_ptr<spdlog::logger> file{};
