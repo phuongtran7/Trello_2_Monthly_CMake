@@ -112,7 +112,7 @@ std::string monthly::make_header() const
 		"   \\csname the#1\\endcsname\\quad\n"
 		"  \\fi\n"
 		"  }\n"
-		"\\newcommand\\prefix@section{For the week of }\n"
+		"\\newcommand\\prefix@section{}\n"
 		"\\makeatother\n"
 		"\n"
 		"\\title{Monthly Status Report}\n";
@@ -559,8 +559,10 @@ void monthly::process_data()
 	// Start writing each list as a section
 	for (const auto& list : lists)
 	{
+		file->info("\\begin{center}");
 		auto section_string = fmt::format("\\section{{{}}}", sanitize_input(list.name));
 		file->info(section_string);
+		file->info("\\end{center}");
 
 		// Get the cards in this list with this label
 		auto cards = get_card(list.id);
