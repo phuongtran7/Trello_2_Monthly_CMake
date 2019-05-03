@@ -10,6 +10,8 @@ find_package(cpprestsdk REQUIRED)
 target_link_libraries(CMake_Trello2Monthly PRIVATE cpprestsdk::cpprest)
 find_package(spdlog CONFIG REQUIRED)
 target_link_libraries(CMake_Trello2Monthly PRIVATE spdlog::spdlog)
+
+# For some reason we still need this for GCC-8 to compile the std::filesystem
 target_link_libraries(CMake_Trello2Monthly PRIVATE stdc++fs)
 
 set_target_properties(CMake_Trello2Monthly PROPERTIES
