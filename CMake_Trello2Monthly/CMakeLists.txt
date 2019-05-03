@@ -10,7 +10,7 @@ find_package(cpprestsdk REQUIRED)
 target_link_libraries(CMake_Trello2Monthly PRIVATE cpprestsdk::cpprest)
 find_package(spdlog CONFIG REQUIRED)
 target_link_libraries(CMake_Trello2Monthly PRIVATE spdlog::spdlog)
-target_link_libraries(CMake_Trello2Monthly lstdc++fs)
+target_link_libraries(CMake_Trello2Monthly PRIVATE stdc++fs)
 
 set_target_properties(CMake_Trello2Monthly PROPERTIES
     CXX_STANDARD 17
