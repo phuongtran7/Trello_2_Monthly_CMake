@@ -745,10 +745,11 @@ std::string monthly::sanitize_input(std::string input) const
 		}
 		else
 		{
-			const auto find = input.find(pair.first);
-			if (find != std::string::npos)
+			auto find = input.find(pair.first);
+			while (find != std::string::npos)
 			{
 				input.replace(find, pair.first.length(), pair.second);
+				find = input.find(pair.first);
 			}
 		}
 
