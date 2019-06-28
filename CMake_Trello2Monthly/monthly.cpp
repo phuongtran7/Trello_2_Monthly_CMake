@@ -749,7 +749,7 @@ std::string monthly::sanitize_input(std::string input) const
 			while (find != std::string::npos)
 			{
 				input.replace(find, pair.first.length(), pair.second);
-				find = input.find(pair.first);
+				find = input.find(pair.first, find + pair.second.length());
 			}
 		}
 
